@@ -53,6 +53,7 @@ public class TempFragment extends BaseFragment implements DataCallBack<Data>, Vi
 
 
     private View view;
+
     public TempFragment() {
         // Required empty public constructor
     }
@@ -131,7 +132,7 @@ public class TempFragment extends BaseFragment implements DataCallBack<Data>, Vi
 
     @Override
     void initData(boolean showLoading) {
-        Log.e(TAG,TAG+" = initdata");
+        Log.e(TAG, TAG + " = initdata");
         et_ip.setText("172.29.82.1");
         et_port.setText("8899");
         tv_msg.setText("打开开关连接");
@@ -184,14 +185,15 @@ public class TempFragment extends BaseFragment implements DataCallBack<Data>, Vi
             return;
         }
         disconnect();
-            connectTask = new ConnectTask(getContext(), data, this);
-            connectTask.setip(ip, port);
-            connectTask.setCIRCLE(true);
-            connectTask.execute();
+        connectTask = new ConnectTask(getContext(), data, this);
+        connectTask.setip(ip, port);
+        connectTask.setCIRCLE(true);
+        connectTask.setCommand(Constant.TEMHUM_CHK);
+        connectTask.execute();
     }
 
     private void disconnect() {
-        if (connectTask!=null&&connectTask.isSuccess()) {
+        if (connectTask != null && connectTask.isSuccess()) {
             connectTask.disconnect();
             connectTask = null;
         }
@@ -203,12 +205,11 @@ public class TempFragment extends BaseFragment implements DataCallBack<Data>, Vi
         tv_msg.setTextColor(Color.GREEN);
         tv_shidu.setText(String.valueOf(data.getHum()));
         tv_wendu.setText(String.valueOf(data.getTem()));
-        switchCompat.setChecked(true);
     }
 
     @Override
     public void connectFailed(Data data) {
-        Log.e(TAG, TAG+",connectFailed");
+        Log.e(TAG, TAG + ",connectFailed");
         tv_msg.setText("连接失败");
         tv_msg.setTextColor(Color.RED);
         switchCompat.setChecked(false);
@@ -218,16 +219,23 @@ public class TempFragment extends BaseFragment implements DataCallBack<Data>, Vi
 
     @Override
     public void connectionLost() {
-        Log.e(TAG, TAG+",connectionLost");
+        Log.e(TAG, TAG + ",connectionLost");
         tv_msg.setText("连接丢失，打开开关连接");
         tv_msg.setTextColor(Color.GRAY);
+        switchCompat.setChecked(false);
         tv_wendu.setText("0");
         tv_shidu.setText("0");
+    }
+    @Override
+    public void connectSuccess(Data data) {
+        tv_msg.setText("连接成功");
+        tv_msg.setTextColor(Color.GREEN);
+        switchCompat.setChecked(true);
     }
 
     @Override
     public void onTaskStart() {
-        Log.e(TAG, TAG+",ontaskstart");
+        Log.e(TAG, TAG + ",ontaskstart");
         tv_msg.setText("正在连接");
         tv_msg.setTextColor(Color.BLACK);
         tv_wendu.setText("0");
@@ -237,17 +245,19 @@ public class TempFragment extends BaseFragment implements DataCallBack<Data>, Vi
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        Log.e(TAG,TAG+"  onHiddenChanged = "+hidden);
+        Log.e(TAG, TAG + "  onHiddenChanged = " + hidden);
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        Log.e(TAG,TAG+"  setUserVisibleHint ="+isVisibleToUser);
+        Log.e(TAG, TAG + "  setUserVisibleHint =" + isVisibleToUser);
         if (isViewCreated) {
             if (isVisibleToUser) {
+                switchCompat.setChecked(true);
                 connect();
             } else {
+                switchCompat.setChecked(false);
                 disconnect();
             }
         }
@@ -257,9 +267,5 @@ public class TempFragment extends BaseFragment implements DataCallBack<Data>, Vi
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (!isChecked){
-            tv_msg.setText("打开开关连接");
-            tv_msg.setTextColor(Color.GRAY);
-        }
     }
 }

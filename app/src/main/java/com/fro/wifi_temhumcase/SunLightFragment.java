@@ -185,14 +185,15 @@ public class SunLightFragment extends BaseFragment implements View.OnClickListen
             return;
         }
         disconnect();
-            connectTask = new ConnectTask(getContext(), data, this);
-            connectTask.setip(ip, port);
-            connectTask.setCIRCLE(true);
-            connectTask.execute();
+        connectTask = new ConnectTask(getContext(), data, this);
+        connectTask.setip(ip, port);
+        connectTask.setCIRCLE(true);
+        connectTask.setCommand(Constant.SUN_CHK);
+        connectTask.execute();
     }
 
     private void disconnect() {
-        if (connectTask!=null&&connectTask.isSuccess()){
+        if (connectTask != null && connectTask.isSuccess()) {
             connectTask.disconnect();
             connectTask = null;
         }
@@ -200,15 +201,22 @@ public class SunLightFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void receiveData(Data data) {
-        tv_msg.setText("连接成功");
-        tv_msg.setTextColor(Color.GREEN);
+//        tv_msg.setText("连接成功");
+//        tv_msg.setTextColor(Color.GREEN);
         tv_sun.setText(String.valueOf(data.getSun()));
         switchCompat.setChecked(true);
     }
 
     @Override
+    public void connectSuccess(Data data) {
+        tv_msg.setText("连接成功");
+        tv_msg.setTextColor(Color.GREEN);
+        switchCompat.setChecked(true);
+    }
+
+    @Override
     public void connectFailed(Data data) {
-        Log.e(TAG, TAG+",connectFailed");
+        Log.e(TAG, TAG + ",connectFailed");
         tv_msg.setText("连接失败");
         tv_msg.setTextColor(Color.RED);
         switchCompat.setChecked(false);
@@ -217,16 +225,16 @@ public class SunLightFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void connectionLost() {
-        Log.e(TAG, TAG+",connectionLost");
-        switchCompat.setChecked(false);
+        Log.e(TAG, TAG + ",connectionLost");
         tv_msg.setText("连接丢失，打开开关连接");
         tv_msg.setTextColor(Color.GRAY);
         tv_sun.setText("0");
+        switchCompat.setChecked(false);
     }
 
     @Override
     public void onTaskStart() {
-        Log.e(TAG, TAG+",onTaskStart");
+        Log.e(TAG, TAG + ",onTaskStart");
         tv_msg.setText("正在连接");
         tv_msg.setTextColor(Color.BLACK);
         tv_sun.setText("0");
@@ -234,10 +242,6 @@ public class SunLightFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (!isChecked) {
-            tv_msg.setText("打开开关连接");
-            tv_msg.setTextColor(Color.GRAY);
-        }
     }
 
     @Override

@@ -50,9 +50,19 @@ public class myClass2 {
             while (true) {
                 try {
                     Thread.sleep(1000);
+
+                    byte[] receive = new byte[1024];
+                    int length = socket.getInputStream().read(receive);
+                    System.out.println("receive:");
+                    for (byte b:receive){
+                        System.out.print(b+"-");
+                    }
+                    System.out.println("==========");
+
                     byte[] ints = parseTemp.calBytes(new byte[]{1, 5, 6, 0, start});
                     socket.getOutputStream().write(ints);
 //                    Arrays.asList(ints).stream().forEach(s -> System.out.print(s + ","));
+                    System.out.println("send:");
                     for (byte b:ints){
                         System.out.print(b+"-");
                     }

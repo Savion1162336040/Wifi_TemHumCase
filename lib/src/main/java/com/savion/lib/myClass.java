@@ -41,10 +41,14 @@ public class myClass {
         public void run() {
             try {
 //                handleSocket();
+                receiveData();
                 sendFakeData();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+
+        private void receiveData(){
         }
 
 
@@ -52,9 +56,20 @@ public class myClass {
             while (true) {
                 try {
                     Thread.sleep(1000);
+                    byte[] receive = new byte[1024];
+                    int length = socket.getInputStream().read(receive);
+                    System.out.println("receive:");
+                    for (byte b:receive){
+                        System.out.print(b+"-");
+                    }
+                    System.out.println("==========");
+
+
                     byte[] ints = parseTemp.calBytes(new byte[]{1, 5, 6, 0, humstart,0,temstart});
                     socket.getOutputStream().write(ints);
+
 //                    Arrays.asList(ints).stream().forEach(s -> System.out.print(s + ","));
+                    System.out.println("send:");
                     for (byte b:ints){
                         System.out.print(b+"-");
                     }
@@ -62,10 +77,10 @@ public class myClass {
                     temstart+=10;
                     humstart+=10;
                 } catch (InterruptedException e) {
-                    System.out.println("InterruptedException发送不成功");
+                    System.out.println("InterruptedException");
                     //e.printStackTrace();
                 } catch (IOException e) {
-                    System.out.println("IOException发送不成功");
+                    System.out.println("IOException");
                     //e.printStackTrace();
                 }
             }

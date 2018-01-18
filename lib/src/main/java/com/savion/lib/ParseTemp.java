@@ -1,6 +1,7 @@
 package com.savion.lib;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Administrator on 2018-01-18.
@@ -16,6 +17,17 @@ public class ParseTemp {
 
         Arrays.asList(bytes).stream().forEach(System.out::println);
         System.out.println(bytes.toString());
+
+
+        try{
+            List<String> e=null;
+            e.get(1);
+        }catch (Exception e){
+            System.out.println("Exception");
+            return;
+        }finally {
+            System.out.println("finally");
+        }
 
 
     }

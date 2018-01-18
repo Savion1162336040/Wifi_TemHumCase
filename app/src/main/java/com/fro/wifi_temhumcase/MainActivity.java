@@ -106,6 +106,11 @@ public class MainActivity extends Fragment {
         }
 
         @Override
+        public void connectSuccess(Data data) {
+
+        }
+
+        @Override
         public void connectFailed(Data o) {
             error_tv.setText("连接失败");
             error_tv.setTextColor(context.getResources().getColor(R.color.red));

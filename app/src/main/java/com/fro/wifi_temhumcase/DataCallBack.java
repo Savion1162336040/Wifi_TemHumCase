@@ -7,6 +7,7 @@ package com.fro.wifi_temhumcase;
 public interface DataCallBack<T> {
 
     void receiveData(T t);
+    void connectSuccess(T t);
     void connectFailed(T t);
     void connectionLost();
     void onTaskStart();
