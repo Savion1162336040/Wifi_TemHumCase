@@ -161,7 +161,6 @@ public class SunLightFragment extends BaseFragment implements View.OnClickListen
                     // TODO: 2018-01-18 连接
                     connect();
                     setDontShow(false);
-                    createMaterialDialog("hehe","haha",this);
                 } else {
                     disconnect();
                 }
@@ -210,7 +209,7 @@ public class SunLightFragment extends BaseFragment implements View.OnClickListen
         switchCompat.setChecked(true);
         // TODO: 2018/5/7  光照阀值判断
         if (data.getSun() > 100) {
-            createDialog2("title,", "msg", this);
+            createMaterialDialog("title,", "msg", this);
         }
     }
 

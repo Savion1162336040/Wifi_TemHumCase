@@ -161,7 +161,6 @@ public class TempFragment extends BaseFragment implements DataCallBack<Data>, Vi
                     // TODO: 2018-01-18 连接
                     connect();
                     setDontShow(false);
-                    createMaterialDialog("hehe","haha",this);
                 } else {
                     disconnect();
                 }
@@ -210,7 +209,7 @@ public class TempFragment extends BaseFragment implements DataCallBack<Data>, Vi
         tv_wendu.setText(String.valueOf(data.getTem()));
         // TODO: 2018/5/7  阀值判断
         if (data.getHum() > 100 || data.getTem() > 100) {
-            createDialog2("title", "msg", this);
+            createMaterialDialog("title", "msg", this);
         }
     }
 
