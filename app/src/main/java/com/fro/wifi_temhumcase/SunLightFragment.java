@@ -1,6 +1,7 @@
 package com.fro.wifi_temhumcase;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,7 +30,7 @@ import java.io.IOException;
  * Use the {@link SunLightFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SunLightFragment extends BaseFragment implements View.OnClickListener, DataCallBack<Data>, CompoundButton.OnCheckedChangeListener {
+public class SunLightFragment extends BaseFragment implements View.OnClickListener, DataCallBack<Data>, CompoundButton.OnCheckedChangeListener, DialogInterface.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "tag";
@@ -133,7 +134,7 @@ public class SunLightFragment extends BaseFragment implements View.OnClickListen
     void initData(boolean showLoading) {
         Log.e(TAG, TAG + " = initdata");
 
-        et_ip.setText("172.29.82.1");
+        et_ip.setText("192.168.42.78");
         et_port.setText("8898");
         tv_msg.setText("打开开关连接");
         tv_msg.setTextColor(Color.GRAY);
@@ -159,6 +160,8 @@ public class SunLightFragment extends BaseFragment implements View.OnClickListen
                 if (switchCompat.isChecked()) {
                     // TODO: 2018-01-18 连接
                     connect();
+                    setDontShow(false);
+                    createMaterialDialog("hehe","haha",this);
                 } else {
                     disconnect();
                 }
@@ -173,7 +176,7 @@ public class SunLightFragment extends BaseFragment implements View.OnClickListen
             port = Integer.parseInt(et_port.getText().toString().trim());
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(getContext(), "不合法的端口号", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "不合法的端口号", Toast.LENGTH_SHORT).show();
             return;
         }
         if (TextUtils.isEmpty(ip)) {
@@ -185,7 +188,7 @@ public class SunLightFragment extends BaseFragment implements View.OnClickListen
             return;
         }
         disconnect();
-        connectTask = new ConnectTask(getContext(), data, this);
+        connectTask = new ConnectTask(getActivity(), data, this);
         connectTask.setip(ip, port);
         connectTask.setCIRCLE(true);
         connectTask.setCommand(Constant.SUN_CHK);
@@ -205,6 +208,10 @@ public class SunLightFragment extends BaseFragment implements View.OnClickListen
 //        tv_msg.setTextColor(Color.GREEN);
         tv_sun.setText(String.valueOf(data.getSun()));
         switchCompat.setChecked(true);
+        // TODO: 2018/5/7  光照阀值判断
+        if (data.getSun() > 100) {
+            createDialog2("title,", "msg", this);
+        }
     }
 
     @Override
@@ -256,12 +263,18 @@ public class SunLightFragment extends BaseFragment implements View.OnClickListen
         Log.e(TAG, TAG + "  setUserVisibleHint =" + isVisibleToUser);
         if (isViewCreated) {
             if (isVisibleToUser) {
-                connect();
+                //connect();
             } else {
                 disconnect();
+                dismissDialog();
             }
         }
     }
 
     public static String TAG = "SunLightFragment";
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        dialog.dismiss();
+    }
 }

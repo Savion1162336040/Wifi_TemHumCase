@@ -1,6 +1,7 @@
 package com.fro.wifi_temhumcase;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,7 +29,7 @@ import java.io.IOException;
  * Use the {@link TempFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TempFragment extends BaseFragment implements DataCallBack<Data>, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class TempFragment extends BaseFragment implements DataCallBack<Data>, View.OnClickListener, CompoundButton.OnCheckedChangeListener, DialogInterface.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "tag";
@@ -133,7 +134,7 @@ public class TempFragment extends BaseFragment implements DataCallBack<Data>, Vi
     @Override
     void initData(boolean showLoading) {
         Log.e(TAG, TAG + " = initdata");
-        et_ip.setText("172.29.82.1");
+        et_ip.setText("192.168.42.78");
         et_port.setText("8899");
         tv_msg.setText("打开开关连接");
         tv_msg.setTextColor(Color.GRAY);
@@ -159,6 +160,8 @@ public class TempFragment extends BaseFragment implements DataCallBack<Data>, Vi
                 if (switchCompat.isChecked()) {
                     // TODO: 2018-01-18 连接
                     connect();
+                    setDontShow(false);
+                    createMaterialDialog("hehe","haha",this);
                 } else {
                     disconnect();
                 }
@@ -173,7 +176,7 @@ public class TempFragment extends BaseFragment implements DataCallBack<Data>, Vi
             port = Integer.parseInt(et_port.getText().toString().trim());
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(getContext(), "不合法的端口号", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "不合法的端口号", Toast.LENGTH_SHORT).show();
             return;
         }
         if (TextUtils.isEmpty(ip)) {
@@ -185,7 +188,7 @@ public class TempFragment extends BaseFragment implements DataCallBack<Data>, Vi
             return;
         }
         disconnect();
-        connectTask = new ConnectTask(getContext(), data, this);
+        connectTask = new ConnectTask(getActivity(), data, this);
         connectTask.setip(ip, port);
         connectTask.setCIRCLE(true);
         connectTask.setCommand(Constant.TEMHUM_CHK);
@@ -205,6 +208,10 @@ public class TempFragment extends BaseFragment implements DataCallBack<Data>, Vi
         tv_msg.setTextColor(Color.GREEN);
         tv_shidu.setText(String.valueOf(data.getHum()));
         tv_wendu.setText(String.valueOf(data.getTem()));
+        // TODO: 2018/5/7  阀值判断
+        if (data.getHum() > 100 || data.getTem() > 100) {
+            createDialog2("title", "msg", this);
+        }
     }
 
     @Override
@@ -226,6 +233,7 @@ public class TempFragment extends BaseFragment implements DataCallBack<Data>, Vi
         tv_wendu.setText("0");
         tv_shidu.setText("0");
     }
+
     @Override
     public void connectSuccess(Data data) {
         tv_msg.setText("连接成功");
@@ -254,11 +262,12 @@ public class TempFragment extends BaseFragment implements DataCallBack<Data>, Vi
         Log.e(TAG, TAG + "  setUserVisibleHint =" + isVisibleToUser);
         if (isViewCreated) {
             if (isVisibleToUser) {
-                switchCompat.setChecked(true);
-                connect();
+                //switchCompat.setChecked(true);
+                //connect();
             } else {
                 switchCompat.setChecked(false);
                 disconnect();
+                dismissDialog();
             }
         }
     }
@@ -267,5 +276,11 @@ public class TempFragment extends BaseFragment implements DataCallBack<Data>, Vi
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        // TODO: 2018/5/7 点击确定事件
+        dialog.dismiss();
     }
 }

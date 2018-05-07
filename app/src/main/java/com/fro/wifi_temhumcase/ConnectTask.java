@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.Arrays;
 
 import com.fro.wifi_temhumcase.R;
 import com.fro.util.FROTemHum;
@@ -145,7 +146,7 @@ public class ConnectTask extends AsyncTask<Void, Data, Void> {
             try {
                 StreamUtil.writeCommand(outputStream, command);
                 read_buff = StreamUtil.readData(inputStream);
-                Thread.sleep(200);
+                Thread.sleep(500);
             } catch (IOException e) {
                 e.printStackTrace();
                 //send or receive failed means lost connection
@@ -155,6 +156,7 @@ public class ConnectTask extends AsyncTask<Void, Data, Void> {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            Log.e("ConnectTask","receivedata:"+Arrays.toString(read_buff));
             dataTemp = FROTemHum.getTemData(Constant.TEMHUM_LEN, Constant.TEMHUM_NUM, read_buff);
             if (dataTemp != null) {
                 data.setTem((int) (float) dataTemp);
@@ -187,7 +189,7 @@ public class ConnectTask extends AsyncTask<Void, Data, Void> {
         }
         setCIRCLE(false);
         setSTATU(false);
-        cancel(true);
+        //cancel(true);
     }
 
     /**
